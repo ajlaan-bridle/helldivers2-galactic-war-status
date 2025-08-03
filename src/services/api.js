@@ -1,8 +1,8 @@
 const API_BASE_URL = '/api';
 
-// Rate limiting: 3 calls per 15 seconds (more conservative)
+// Rate limiting: 2 calls per 20 seconds (very conservative)
 class RateLimiter {
-  constructor(maxCalls = 3, timeWindow = 15000) {
+  constructor(maxCalls = 2, timeWindow = 20000) {
     this.maxCalls = maxCalls;
     this.timeWindow = timeWindow;
     this.calls = [];
@@ -17,7 +17,7 @@ class RateLimiter {
     // If we've made too many calls, wait
     if (this.calls.length >= this.maxCalls) {
       const oldestCall = Math.min(...this.calls);
-      const waitTime = this.timeWindow - (now - oldestCall) + 500; // Add 500ms buffer
+      const waitTime = this.timeWindow - (now - oldestCall) + 1000; // Add 1s buffer
       
       if (waitTime > 0) {
         await new Promise(resolve => setTimeout(resolve, waitTime));
@@ -68,31 +68,19 @@ export async function fetchData(endpoint) {
  */
 export async function fetchAllData() {
   try {
-    // Make sequential API calls to respect rate limiting with small delays
+    // Temporarily load only war stats for testing
+    console.log('Starting to fetch war stats...');
     const warStats = await fetchData('/v1/war');
-    await new Promise(resolve => setTimeout(resolve, 1000)); // 1 second delay
+    console.log('War stats loaded:', warStats);
     
-    const assignments = await fetchData('/v1/assignments');
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    const planets = await fetchData('/v1/planets');
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    const campaigns = await fetchData('/v1/campaigns');
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    const dispatches = await fetchData('/v2/dispatches');
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    const steamNews = await fetchData('/v1/steam');
-
+    // For now, return mock data for other endpoints to test header display
     return {
       warStats,
-      assignments,
-      planets,
-      campaigns,
-      dispatches,
-      steamNews,
+      assignments: [], // Mock empty data
+      planets: [], // Mock empty data
+      campaigns: [], // Mock empty data
+      dispatches: [], // Mock empty data
+      steamNews: [], // Mock empty data
       lastUpdated: new Date().toISOString()
     };
   } catch (error) {
