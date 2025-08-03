@@ -1,8 +1,8 @@
 const API_BASE_URL = '/api';
 
-// Rate limiting: 5 calls per 10 seconds
+// Rate limiting: 3 calls per 15 seconds (more conservative)
 class RateLimiter {
-  constructor(maxCalls = 5, timeWindow = 10000) {
+  constructor(maxCalls = 3, timeWindow = 15000) {
     this.maxCalls = maxCalls;
     this.timeWindow = timeWindow;
     this.calls = [];
@@ -17,7 +17,7 @@ class RateLimiter {
     // If we've made too many calls, wait
     if (this.calls.length >= this.maxCalls) {
       const oldestCall = Math.min(...this.calls);
-      const waitTime = this.timeWindow - (now - oldestCall) + 100; // Add 100ms buffer
+      const waitTime = this.timeWindow - (now - oldestCall) + 500; // Add 500ms buffer
       
       if (waitTime > 0) {
         await new Promise(resolve => setTimeout(resolve, waitTime));
@@ -68,12 +68,22 @@ export async function fetchData(endpoint) {
  */
 export async function fetchAllData() {
   try {
-    // Make sequential API calls to respect rate limiting
+    // Make sequential API calls to respect rate limiting with small delays
     const warStats = await fetchData('/v1/war');
+    await new Promise(resolve => setTimeout(resolve, 1000)); // 1 second delay
+    
     const assignments = await fetchData('/v1/assignments');
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    
     const planets = await fetchData('/v1/planets');
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    
     const campaigns = await fetchData('/v1/campaigns');
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    
     const dispatches = await fetchData('/v2/dispatches');
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    
     const steamNews = await fetchData('/v1/steam');
 
     return {
