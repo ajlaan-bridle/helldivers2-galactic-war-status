@@ -6,25 +6,7 @@
   flex-direction: column;
 }
 
-.App-header {
-  background-color: #282c34;
-  padding: 20px;
-  color: white;
-  text-align: center;
-  border-bottom: 2px solid #444;
-}
 
-.App-header h1 {
-  margin: 0;
-  font-size: 2rem;
-  color: #ffd700;
-}
-
-.last-updated {
-  margin: 10px 0 0 0;
-  font-size: 0.9rem;
-  color: #ccc;
-}
 
 .App-main {
   flex: 1;

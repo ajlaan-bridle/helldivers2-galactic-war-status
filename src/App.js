@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './App.css';
 import { fetchAllData } from './services/api';
+import Header from './components/Header';
 
 function App() {
   const [loading, setLoading] = useState(true);
@@ -44,12 +45,10 @@ function App() {
   if (loading) {
     return (
       <div className="App">
-        <header className="App-header">
-          <h1>Helldivers 2 Galactic War Status</h1>
-          <div className="loading">
-            <p>Loading galactic war data...</p>
-          </div>
-        </header>
+        <Header warStats={null} lastUpdated={null} />
+        <div className="loading">
+          <p>Loading galactic war data...</p>
+        </div>
       </div>
     );
   }
@@ -57,27 +56,18 @@ function App() {
   if (error) {
     return (
       <div className="App">
-        <header className="App-header">
-          <h1>Helldivers 2 Galactic War Status</h1>
-          <div className="error">
-            <p>{error}</p>
-            <button onClick={fetchData}>Retry</button>
-          </div>
-        </header>
+        <Header warStats={null} lastUpdated={null} />
+        <div className="error">
+          <p>{error}</p>
+          <button onClick={fetchData}>Retry</button>
+        </div>
       </div>
     );
   }
 
   return (
     <div className="App">
-      <header className="App-header">
-        <h1>Helldivers 2 Galactic War Status</h1>
-        {data.lastUpdated && (
-          <p className="last-updated">
-            Last updated: {new Date(data.lastUpdated).toLocaleString()}
-          </p>
-        )}
-      </header>
+      <Header warStats={data.warStats} lastUpdated={data.lastUpdated} />
       
       <main className="App-main">
         <div className="content-grid">
