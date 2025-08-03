@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import './App.css';
 import { fetchAllData } from './services/api';
 import Header from './components/Header';
+import MajorOrdersPanel from './components/MajorOrdersPanel';
+import TopPlanetsList from './components/TopPlanetsList';
 
 function App() {
   const [loading, setLoading] = useState(true);
@@ -72,15 +74,8 @@ function App() {
       <main className="App-main">
         <div className="content-grid">
           <div className="left-sidebar">
-            {/* Major Orders and Top Planets panels will go here */}
-            <div className="panel">
-              <h3>Major Orders</h3>
-              <p>Panel coming soon...</p>
-            </div>
-            <div className="panel">
-              <h3>Top Planets</h3>
-              <p>Panel coming soon...</p>
-            </div>
+            <MajorOrdersPanel assignments={data.assignments} />
+            <TopPlanetsList planets={data.planets} campaigns={data.campaigns} />
           </div>
           
           <div className="center-content">

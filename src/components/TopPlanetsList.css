@@ -1,0 +1,161 @@
+.top-planets-panel {
+  max-height: 500px;
+  overflow-y: auto;
+}
+
+.planets-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.planet-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  background-color: rgba(255, 255, 255, 0.03);
+  border: 1px solid #555;
+  border-radius: 6px;
+  padding: 12px;
+  transition: background-color 0.2s ease;
+}
+
+.planet-item:hover {
+  background-color: rgba(255, 255, 255, 0.06);
+}
+
+.planet-rank {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 28px;
+  height: 28px;
+  background-color: #ffd700;
+  color: #1a1a1a;
+  border-radius: 50%;
+  font-weight: bold;
+  font-size: 0.9rem;
+}
+
+.planet-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.planet-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.planet-name {
+  margin: 0;
+  font-size: 1rem;
+  color: #ffd700;
+  font-weight: bold;
+  line-height: 1.2;
+}
+
+.planet-owner {
+  font-size: 0.8rem;
+  font-weight: bold;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.planet-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.stat {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.85rem;
+}
+
+.stat-label {
+  color: #ccc;
+}
+
+.stat-value {
+  color: #fff;
+  font-weight: bold;
+}
+
+.campaign-info {
+  margin-top: 4px;
+}
+
+.campaign-progress {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.progress-bar {
+  flex: 1;
+  height: 6px;
+  background-color: #333;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #4CAF50, #8BC34A);
+  transition: width 0.3s ease;
+}
+
+.progress-text {
+  font-size: 0.75rem;
+  color: #4CAF50;
+  font-weight: bold;
+  min-width: 35px;
+  text-align: right;
+}
+
+.no-data {
+  text-align: center;
+  padding: 20px;
+  color: #666;
+  font-style: italic;
+}
+
+/* Scrollbar styling */
+.top-planets-panel::-webkit-scrollbar {
+  width: 6px;
+}
+
+.top-planets-panel::-webkit-scrollbar-track {
+  background: #2a2a2a;
+  border-radius: 3px;
+}
+
+.top-planets-panel::-webkit-scrollbar-thumb {
+  background: #555;
+  border-radius: 3px;
+}
+
+.top-planets-panel::-webkit-scrollbar-thumb:hover {
+  background: #666;
+}
+
+@media (max-width: 768px) {
+  .planet-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+  }
+  
+  .planet-owner {
+    align-self: flex-end;
+  }
+}
