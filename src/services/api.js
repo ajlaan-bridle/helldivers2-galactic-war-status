@@ -1,4 +1,4 @@
-const API_BASE_URL = 'https://api.helldivers2.dev/api';
+const API_BASE_URL = '/api';
 
 // Rate limiting: 5 calls per 10 seconds
 class RateLimiter {
@@ -47,7 +47,6 @@ export async function fetchData(endpoint) {
       headers: {
         'X-Super-Client': 'aj',
         'X-Super-Contact': 'aj',
-        'Content-Type': 'application/json',
       },
     });
 
@@ -69,14 +68,13 @@ export async function fetchData(endpoint) {
  */
 export async function fetchAllData() {
   try {
-    const [warStats, assignments, planets, campaigns, dispatches, steamNews] = await Promise.all([
-      fetchData('/v1/war'),
-      fetchData('/v1/assignments'),
-      fetchData('/v1/planets'),
-      fetchData('/v1/campaigns'),
-      fetchData('/v2/dispatches'),
-      fetchData('/v1/steam')
-    ]);
+    // Make sequential API calls to respect rate limiting
+    const warStats = await fetchData('/v1/war');
+    const assignments = await fetchData('/v1/assignments');
+    const planets = await fetchData('/v1/planets');
+    const campaigns = await fetchData('/v1/campaigns');
+    const dispatches = await fetchData('/v2/dispatches');
+    const steamNews = await fetchData('/v1/steam');
 
     return {
       warStats,
