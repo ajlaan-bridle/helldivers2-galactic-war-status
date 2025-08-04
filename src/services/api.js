@@ -45,14 +45,19 @@ function extractWarStatsFields(warStats) {
   
   const stats = warStats.statistics;
   return {
-    missionsWon: stats.missionsWon || 0,
-    missionsLost: stats.missionsLost || 0,
-    missionSuccessRate: stats.missionSuccessRate || 0,
-    terminidKills: stats.terminidKills || 0,
-    automatonKills: stats.automatonKills || 0,
-    illuminateKills: stats.illuminateKills || 0,
-    timePlayed: stats.timePlayed || 0,
-    playerCount: stats.playerCount || 0
+    statistics: {
+      missionsWon: stats.missionsWon || 0,
+      missionsLost: stats.missionsLost || 0,
+      missionSuccessRate: stats.missionSuccessRate || 0,
+      terminidKills: stats.terminidKills || 0,
+      automatonKills: stats.automatonKills || 0,
+      illuminateKills: stats.illuminateKills || 0,
+      timePlayed: stats.timePlayed || 0,
+      playerCount: stats.playerCount || 0,
+      // Additional fields that Header component expects
+      deaths: stats.deaths || 0,
+      accuracy: stats.accuracy || 0
+    }
   };
 }
 
@@ -325,7 +330,20 @@ export async function fetchAllData() {
     
     // Use processed data if available, fall back to mock data if needed
     return {
-      warStats: processedWarStats,
+      warStats: processedWarStats || {
+        statistics: {
+          missionsWon: 2847291,
+          missionsLost: 1203847,
+          missionSuccessRate: 70.2,
+          terminidKills: 892456123,
+          automatonKills: 445782901,
+          illuminateKills: 12345678,
+          timePlayed: 45892374,
+          playerCount: 45892,
+          deaths: 15847293,
+          accuracy: 68.5
+        }
+      },
       assignments: processedAssignments.length > 0 ? processedAssignments : [
         {
           id: 1,
