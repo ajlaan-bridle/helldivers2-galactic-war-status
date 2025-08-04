@@ -2,12 +2,23 @@ import React from 'react';
 import './TopPlanetsList.css';
 
 function TopPlanetsList({ planets, campaigns }) {
+  if (planets === null) {
+    return (
+      <div className="panel top-planets-panel">
+        <h3>Top Planets by Activity</h3>
+        <div className="loading-state">
+          <p>Loading planet data...</p>
+        </div>
+      </div>
+    );
+  }
+
   if (!planets || planets.length === 0) {
     return (
       <div className="panel top-planets-panel">
-        <h3>Top Planets</h3>
+        <h3>Top Planets by Activity</h3>
         <div className="no-data">
-          <p>No planet data available</p>
+          <p>No active planets found</p>
         </div>
       </div>
     );

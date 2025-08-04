@@ -35,6 +35,18 @@ function SteamNewsPanel({ steamNews }) {
     window.open(url, '_blank', 'noopener,noreferrer');
   };
 
+  // Check for null data (loading state)
+  if (steamNews === null) {
+    return (
+      <div className="panel steam-news-panel">
+        <h3>Steam News</h3>
+        <div className="loading-state">
+          <p>Loading Steam news...</p>
+        </div>
+      </div>
+    );
+  }
+
   // Handle different possible data structures
   let newsItems = [];
   if (Array.isArray(steamNews)) {

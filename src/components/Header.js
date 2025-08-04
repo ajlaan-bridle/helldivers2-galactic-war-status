@@ -24,54 +24,60 @@ function Header({ warStats, lastUpdated }) {
         )}
       </div>
       
-      {warStats && (
-        <div className="war-stats">
-          <div className="stat-group">
-            <div className="stat-item">
-              <span className="stat-label">Mission Success Rate</span>
-              <span className="stat-value">{formatPercentage(warStats.statistics?.missionSuccessRate / 100)}</span>
+      <div className="war-stats">
+        {warStats ? (
+          <>
+            <div className="stat-group">
+              <div className="stat-item">
+                <span className="stat-label">Mission Success Rate</span>
+                <span className="stat-value">{formatPercentage(warStats.statistics?.missionSuccessRate / 100)}</span>
+              </div>
+              <div className="stat-item">
+                <span className="stat-label">Missions Won</span>
+                <span className="stat-value">{formatNumber(warStats.statistics?.missionsWon)}</span>
+              </div>
+              <div className="stat-item">
+                <span className="stat-label">Missions Lost</span>
+                <span className="stat-value">{formatNumber(warStats.statistics?.missionsLost)}</span>
+              </div>
             </div>
-            <div className="stat-item">
-              <span className="stat-label">Missions Won</span>
-              <span className="stat-value">{formatNumber(warStats.statistics?.missionsWon)}</span>
+            
+            <div className="stat-group">
+              <div className="stat-item">
+                <span className="stat-label">Active Players</span>
+                <span className="stat-value highlight">{formatNumber(warStats.statistics?.playerCount)}</span>
+              </div>
+              <div className="stat-item">
+                <span className="stat-label">Total Deaths</span>
+                <span className="stat-value">{formatNumber(warStats.statistics?.deaths)}</span>
+              </div>
+              <div className="stat-item">
+                <span className="stat-label">Accuracy</span>
+                <span className="stat-value">{formatPercentage(warStats.statistics?.accuracy / 100)}</span>
+              </div>
             </div>
-            <div className="stat-item">
-              <span className="stat-label">Missions Lost</span>
-              <span className="stat-value">{formatNumber(warStats.statistics?.missionsLost)}</span>
+            
+            <div className="stat-group">
+              <div className="stat-item">
+                <span className="stat-label">Terminid Kills</span>
+                <span className="stat-value">{formatNumber(warStats.statistics?.terminidKills)}</span>
+              </div>
+              <div className="stat-item">
+                <span className="stat-label">Automaton Kills</span>
+                <span className="stat-value">{formatNumber(warStats.statistics?.automatonKills)}</span>
+              </div>
+              <div className="stat-item">
+                <span className="stat-label">Illuminate Kills</span>
+                <span className="stat-value">{formatNumber(warStats.statistics?.illuminateKills)}</span>
+              </div>
             </div>
+          </>
+        ) : (
+          <div className="loading-state">
+            <p>Loading war statistics...</p>
           </div>
-          
-          <div className="stat-group">
-            <div className="stat-item">
-              <span className="stat-label">Active Players</span>
-              <span className="stat-value highlight">{formatNumber(warStats.statistics?.playerCount)}</span>
-            </div>
-            <div className="stat-item">
-              <span className="stat-label">Total Deaths</span>
-              <span className="stat-value">{formatNumber(warStats.statistics?.deaths)}</span>
-            </div>
-            <div className="stat-item">
-              <span className="stat-label">Accuracy</span>
-              <span className="stat-value">{formatPercentage(warStats.statistics?.accuracy / 100)}</span>
-            </div>
-          </div>
-          
-          <div className="stat-group">
-            <div className="stat-item">
-              <span className="stat-label">Terminid Kills</span>
-              <span className="stat-value">{formatNumber(warStats.statistics?.terminidKills)}</span>
-            </div>
-            <div className="stat-item">
-              <span className="stat-label">Automaton Kills</span>
-              <span className="stat-value">{formatNumber(warStats.statistics?.automatonKills)}</span>
-            </div>
-            <div className="stat-item">
-              <span className="stat-label">Illuminate Kills</span>
-              <span className="stat-value">{formatNumber(warStats.statistics?.illuminateKills)}</span>
-            </div>
-          </div>
-        </div>
-      )}
+        )}
+      </div>
     </header>
   );
 }

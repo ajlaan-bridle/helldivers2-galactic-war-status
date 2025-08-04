@@ -2,6 +2,17 @@ import React from 'react';
 import './MajorOrdersPanel.css';
 
 function MajorOrdersPanel({ assignments }) {
+  if (assignments === null) {
+    return (
+      <div className="panel major-orders-panel">
+        <h3>Major Orders</h3>
+        <div className="loading-state">
+          <p>Loading major orders...</p>
+        </div>
+      </div>
+    );
+  }
+
   if (!assignments || assignments.length === 0) {
     return (
       <div className="panel major-orders-panel">

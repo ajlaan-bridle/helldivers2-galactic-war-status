@@ -84,6 +84,18 @@ function DispatchesPanel({ dispatches }) {
     }
   };
 
+  // Check for null data (loading state)
+  if (dispatches === null) {
+    return (
+      <div className="panel dispatches-panel">
+        <h3>Dispatches</h3>
+        <div className="loading-state">
+          <p>Loading dispatches...</p>
+        </div>
+      </div>
+    );
+  }
+
   // Handle different possible data structures
   let dispatchItems = [];
   if (Array.isArray(dispatches)) {

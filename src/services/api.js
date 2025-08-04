@@ -73,16 +73,26 @@ function extractAssignmentsFields(assignments) {
   }
   
   return assignments.map(assignment => {
-    const progress = assignment.progress && assignment.progress[0] ? assignment.progress[0] : 0;
-    const targetValue = assignment.tasks && assignment.tasks[0] && assignment.tasks[0].values && assignment.tasks[0].values[2] ? assignment.tasks[0].values[2] : 1;
+    // Extract tasks with proper progress values
+    const tasks = assignment.tasks ? assignment.tasks.map((task, index) => {
+      const currentProgress = assignment.progress && assignment.progress[index] !== undefined ? assignment.progress[index] : 0;
+      const targetValue = task.values && task.values[2] !== undefined ? task.values[2] : 1;
+      
+      return {
+        type: task.type || `Task ${index + 1}`,
+        values: [currentProgress, targetValue], // [current, target] format expected by component
+        progress: targetValue > 0 ? (currentProgress / targetValue) * 100 : 0
+      };
+    }) : [];
     
     return {
+      id: assignment.id,
       title: assignment.title || 'Unknown Assignment',
-      briefing: assignment.briefing || '',
-      progress: progress,
-      target: targetValue,
-      progressPercentage: targetValue > 0 ? (progress / targetValue) * 100 : 0,
-      expiration: assignment.expiration || null
+      briefing: assignment.briefing || assignment.title || '',
+      description: assignment.description || '',
+      tasks: tasks,
+      expiresAt: assignment.expiration || assignment.expiresAt || null, // Component expects expiresAt
+      reward: assignment.reward || null
     };
   });
 }
@@ -328,74 +338,14 @@ export async function fetchAllData() {
       console.log('No active Major Orders found');
     }
     
-    // Use processed data if available, fall back to mock data if needed
+    // Return processed data or null if unavailable - no mock data fallbacks
     return {
-      warStats: processedWarStats || {
-        statistics: {
-          missionsWon: 2847291,
-          missionsLost: 1203847,
-          missionSuccessRate: 70.2,
-          terminidKills: 892456123,
-          automatonKills: 445782901,
-          illuminateKills: 12345678,
-          timePlayed: 45892374,
-          playerCount: 45892,
-          deaths: 15847293,
-          accuracy: 68.5
-        }
-      },
-      assignments: processedAssignments.length > 0 ? processedAssignments : [
-        {
-          id: 1,
-          briefing: "Collect Terminid samples and hold key scientific facilities",
-          description: "Super Earth's scientists need fresh Terminid specimens to develop Gloom-resistant ship shielding. Secure and hold research facilities while collecting samples.",
-          expiresAt: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString(), // 2 days from now
-          tasks: [
-            {
-              type: "COLLECT_SAMPLES",
-              values: [1250, 2000]
-            },
-            {
-              type: "HOLD_FACILITIES",
-              values: [8, 12]
-            }
-          ],
-          reward: {
-            type: "Medals",
-            amount: 45
-          }
-        }
-      ],
-      planets: processedPlanets.length > 0 ? processedPlanets : [
-        {
-          name: "TURING",
-          faction: "Humans",
-          liberation: 78.5,
-          playerCount: 12543
-        },
-        {
-          name: "HEETH",
-          faction: "Terminids",
-          liberation: 23.1,
-          playerCount: 8921
-        },
-        {
-          name: "TIEN KWAN",
-          faction: "Automatons",
-          liberation: 45.7,
-          playerCount: 15672
-        }
-      ],
-      campaigns: campaigns.status === 'fulfilled' ? campaigns.value : [
-        {
-          id: 1,
-          planetName: "TURING",
-          type: "Liberation",
-          progress: 78.5
-        }
-      ],
-      dispatches: dispatches.status === 'fulfilled' ? dispatches.value : [],
-      steamNews: steamNews.status === 'fulfilled' ? steamNews.value : [],
+      warStats: processedWarStats,
+      assignments: processedAssignments.length > 0 ? processedAssignments : null,
+      planets: processedPlanets.length > 0 ? processedPlanets : null,
+      campaigns: campaigns.status === 'fulfilled' ? processedCampaigns : null,
+      dispatches: filteredDispatches.length > 0 ? filteredDispatches : null,
+      steamNews: filteredSteamNews.length > 0 ? filteredSteamNews : null,
       lastUpdated: new Date().toISOString()
     };
   } catch (error) {
