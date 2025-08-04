@@ -1,8 +1,8 @@
 const API_BASE_URL = '/api';
 
-// Rate limiting: 2 calls per 20 seconds (very conservative)
+// Rate limiting: 5 calls per 10 seconds (per PRD specification)
 class RateLimiter {
-  constructor(maxCalls = 2, timeWindow = 20000) {
+  constructor(maxCalls = 5, timeWindow = 10000) {
     this.maxCalls = maxCalls;
     this.timeWindow = timeWindow;
     this.calls = [];
@@ -71,13 +71,14 @@ export async function fetchAllData() {
     // Fetch all data concurrently
     console.log('Starting to fetch all API data...');
     
-    const [warStats, dispatches, steamNews, assignments, planets, campaigns] = await Promise.allSettled([
+    const [warStats, dispatches, steamNews, assignments, planets, campaigns, spaceStations] = await Promise.allSettled([
       fetchData('/api/v1/war'),
       fetchData('/api/v2/dispatches'),
       fetchData('/api/v1/steam'),
       fetchData('/api/v1/assignments'),
       fetchData('/api/v1/planets'),
-      fetchData('/api/v1/campaigns')
+      fetchData('/api/v1/campaigns'),
+      fetchData('/api/v2/space-stations')
     ]);
     
     console.log('API fetch results:', {
@@ -86,7 +87,8 @@ export async function fetchAllData() {
       steamNews: steamNews.status,
       assignments: assignments.status,
       planets: planets.status,
-      campaigns: campaigns.status
+      campaigns: campaigns.status,
+      spaceStations: spaceStations.status
     });
     
     // Log campaigns data specifically for debugging
@@ -94,6 +96,13 @@ export async function fetchAllData() {
       console.log('Campaigns data received:', campaigns.value);
     } else {
       console.log('Campaigns failed:', campaigns.reason);
+    }
+    
+    // Log space stations data specifically for debugging
+    if (spaceStations.status === 'fulfilled') {
+      console.log('Space stations data received:', spaceStations.value);
+    } else {
+      console.log('Space stations failed:', spaceStations.reason);
     }
     
     // Use real data if available, fall back to mock data if needed
@@ -327,6 +336,7 @@ export async function fetchAllData() {
           author: "Arrowhead Game Studios"
         }
       ],
+      spaceStations: spaceStations.status === 'fulfilled' ? spaceStations.value : [],
       lastUpdated: new Date().toISOString()
     };
   }
