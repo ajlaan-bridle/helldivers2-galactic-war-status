@@ -71,22 +71,35 @@ export async function fetchAllData() {
     // Fetch all data concurrently
     console.log('Starting to fetch all API data...');
     
-    const [warStats, dispatches, steamNews] = await Promise.allSettled([
+    const [warStats, dispatches, steamNews, assignments, planets, campaigns] = await Promise.allSettled([
       fetchData('/api/v1/war'),
       fetchData('/api/v2/dispatches'),
-      fetchData('/api/v1/steam')
+      fetchData('/api/v1/steam'),
+      fetchData('/api/v1/assignments'),
+      fetchData('/api/v1/planets'),
+      fetchData('/api/v1/campaigns')
     ]);
     
     console.log('API fetch results:', {
       warStats: warStats.status,
       dispatches: dispatches.status,
-      steamNews: steamNews.status
+      steamNews: steamNews.status,
+      assignments: assignments.status,
+      planets: planets.status,
+      campaigns: campaigns.status
     });
+    
+    // Log campaigns data specifically for debugging
+    if (campaigns.status === 'fulfilled') {
+      console.log('Campaigns data received:', campaigns.value);
+    } else {
+      console.log('Campaigns failed:', campaigns.reason);
+    }
     
     // Use real data if available, fall back to mock data if needed
     return {
       warStats: warStats.status === 'fulfilled' ? warStats.value : null,
-      assignments: [
+      assignments: assignments.status === 'fulfilled' ? assignments.value : [
         {
           id: 1,
           briefing: "Collect Terminid samples and hold key scientific facilities",
@@ -108,7 +121,7 @@ export async function fetchAllData() {
           }
         }
       ],
-      planets: [
+      planets: planets.status === 'fulfilled' ? planets.value : [
         {
           name: "TURING",
           faction: "Humans",
@@ -128,7 +141,7 @@ export async function fetchAllData() {
           playerCount: 15672
         }
       ],
-      campaigns: [
+      campaigns: campaigns.status === 'fulfilled' ? campaigns.value : [
         {
           id: 1,
           planetName: "TURING",
