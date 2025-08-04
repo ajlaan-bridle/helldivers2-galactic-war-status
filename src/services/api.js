@@ -251,6 +251,15 @@ export async function fetchData(endpoint) {
  * @returns {Promise<Object>} - Object containing all fetched data
  */
 export async function fetchAllData() {
+  // Initialize processed data variables
+  let processedWarStats = null;
+  let processedAssignments = [];
+  let processedPlanets = [];
+  let processedCampaigns = [];
+  let filteredDispatches = [];
+  let filteredSteamNews = [];
+  let processedSpaceStations = [];
+  
   try {
     // Fetch all data concurrently
     console.log('Starting to fetch all API data...');
@@ -290,13 +299,13 @@ export async function fetchAllData() {
     }
     
     // Process and validate data according to PRD requirements
-    const processedWarStats = warStats.status === 'fulfilled' ? extractWarStatsFields(warStats.value) : null;
-    const processedAssignments = assignments.status === 'fulfilled' ? extractAssignmentsFields(assignments.value) : [];
-    const processedPlanets = planets.status === 'fulfilled' ? extractPlanetsFields(planets.value) : [];
-    const processedCampaigns = campaigns.status === 'fulfilled' ? extractCampaignsFields(campaigns.value) : [];
-    const filteredDispatches = dispatches.status === 'fulfilled' ? filterDispatches(dispatches.value) : [];
-    const filteredSteamNews = steamNews.status === 'fulfilled' ? filterSteamNews(steamNews.value) : [];
-    const processedSpaceStations = spaceStations.status === 'fulfilled' ? extractSpaceStationsFields(spaceStations.value) : [];
+    processedWarStats = warStats.status === 'fulfilled' ? extractWarStatsFields(warStats.value) : null;
+    processedAssignments = assignments.status === 'fulfilled' ? extractAssignmentsFields(assignments.value) : [];
+    processedPlanets = planets.status === 'fulfilled' ? extractPlanetsFields(planets.value) : [];
+    processedCampaigns = campaigns.status === 'fulfilled' ? extractCampaignsFields(campaigns.value) : [];
+    filteredDispatches = dispatches.status === 'fulfilled' ? filterDispatches(dispatches.value) : [];
+    filteredSteamNews = steamNews.status === 'fulfilled' ? filterSteamNews(steamNews.value) : [];
+    processedSpaceStations = spaceStations.status === 'fulfilled' ? extractSpaceStationsFields(spaceStations.value) : [];
     
     // Log processed data for debugging
     console.log('Processed data:', {
