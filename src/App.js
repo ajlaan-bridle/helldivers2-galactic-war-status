@@ -4,6 +4,8 @@ import { fetchAllData } from './services/api';
 import Header from './components/Header';
 import MajorOrdersPanel from './components/MajorOrdersPanel';
 import TopPlanetsList from './components/TopPlanetsList';
+import DispatchesPanel from './components/DispatchesPanel';
+import SteamNewsPanel from './components/SteamNewsPanel';
 
 function App() {
   const [loading, setLoading] = useState(true);
@@ -87,15 +89,8 @@ function App() {
           </div>
           
           <div className="right-sidebar">
-            {/* Newsfeed panels will go here */}
-            <div className="panel">
-              <h3>Dispatches</h3>
-              <p>Panel coming soon...</p>
-            </div>
-            <div className="panel">
-              <h3>Steam News</h3>
-              <p>Panel coming soon...</p>
-            </div>
+            <DispatchesPanel dispatches={data.dispatches} />
+            <SteamNewsPanel steamNews={data.steamNews} />
           </div>
         </div>
       </main>

@@ -73,14 +73,153 @@ export async function fetchAllData() {
     const warStats = await fetchData('/v1/war');
     console.log('War stats loaded:', warStats);
     
-    // If successful, return real data with mock data for other endpoints
+    // If successful, return real war stats with mock data for other endpoints
     return {
       warStats,
-      assignments: [], // Mock empty data
-      planets: [], // Mock empty data
-      campaigns: [], // Mock empty data
-      dispatches: [], // Mock empty data
-      steamNews: [], // Mock empty data
+      assignments: [
+        {
+          id: 1,
+          briefing: "Collect Terminid samples and hold key scientific facilities",
+          description: "Super Earth's scientists need fresh Terminid specimens to develop Gloom-resistant ship shielding. Secure and hold research facilities while collecting samples.",
+          expiresAt: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString(), // 2 days from now
+          tasks: [
+            {
+              type: "COLLECT_SAMPLES",
+              values: [1250, 2000]
+            },
+            {
+              type: "HOLD_FACILITIES",
+              values: [8, 12]
+            }
+          ],
+          reward: {
+            type: "Medals",
+            amount: 45
+          }
+        }
+      ],
+      planets: [
+        {
+          index: 0,
+          name: "TURING",
+          currentOwner: "Humans",
+          statistics: {
+            playerCount: 12543,
+            missionsWon: 1250,
+            missionsLost: 89
+          }
+        },
+        {
+          index: 1,
+          name: "MALEVELON CREEK",
+          currentOwner: "Humans",
+          statistics: {
+            playerCount: 9876,
+            missionsWon: 987,
+            missionsLost: 123
+          }
+        },
+        {
+          index: 2,
+          name: "HELLMIRE",
+          currentOwner: "Humans",
+          statistics: {
+            playerCount: 8765,
+            missionsWon: 765,
+            missionsLost: 234
+          }
+        },
+        {
+          index: 3,
+          name: "DRAUPNIR",
+          currentOwner: "Humans",
+          statistics: {
+            playerCount: 7654,
+            missionsWon: 654,
+            missionsLost: 87
+          }
+        },
+        {
+          index: 4,
+          name: "PANDION-XXIV",
+          currentOwner: "Humans",
+          statistics: {
+            playerCount: 6543,
+            missionsWon: 543,
+            missionsLost: 98
+          }
+        }
+      ],
+      campaigns: [
+        {
+          planetIndex: 0,
+          progress: 0.75
+        },
+        {
+          planetIndex: 1,
+          progress: 0.45
+        },
+        {
+          planetIndex: 2,
+          progress: 0.23
+        }
+      ],
+      dispatches: [
+        {
+          id: 1,
+          type: "MAJOR_ORDER",
+          message: "URGENT: All Helldivers report to nearest Super Destroyer. New Terminid bioforms detected in Sector 7. Extreme caution advised.",
+          publishedAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(), // 2 hours ago
+          author: "High Command"
+        },
+        {
+          id: 2,
+          type: "TACTICAL_UPDATE",
+          message: "Automaton forces have been pushed back from the Turing system. Helldivers are advised to maintain defensive positions and prepare for counterattack.",
+          publishedAt: new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString(), // 6 hours ago
+          author: "Tactical Command"
+        },
+        {
+          id: 3,
+          type: "SUPPLY_DROP",
+          message: "New shipment of Stratagems has arrived. Priority access granted to active Helldivers in contested sectors.",
+          publishedAt: new Date(Date.now() - 12 * 60 * 60 * 1000).toISOString(), // 12 hours ago
+          author: "Supply Division"
+        },
+        {
+          id: 4,
+          type: "INTELLIGENCE",
+          message: "Reconnaissance reports indicate unusual Illuminate activity near the outer rim. Investigation teams are being deployed.",
+          publishedAt: new Date(Date.now() - 18 * 60 * 60 * 1000).toISOString(), // 18 hours ago
+          author: "Intelligence Division"
+        }
+      ],
+      steamNews: [
+        {
+          id: "news_1",
+          title: "Helldivers 2: Galactic War Update - New Enemy Types Discovered",
+          url: "https://store.steampowered.com/news/app/553850/view/1234567890",
+          contents: "Super Earth Command has confirmed the discovery of new Terminid bioforms in the outer colonies. These enhanced creatures show increased resistance to standard weaponry...",
+          date: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(), // 1 day ago
+          author: "Arrowhead Game Studios"
+        },
+        {
+          id: "news_2",
+          title: "Community Challenge: Liberation of Sector 7 Complete!",
+          url: "https://store.steampowered.com/news/app/553850/view/1234567891",
+          contents: "Thanks to the heroic efforts of Helldivers across the galaxy, Sector 7 has been successfully liberated from Automaton control. Victory celebrations are underway...",
+          date: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(), // 2 days ago
+          author: "Arrowhead Game Studios"
+        },
+        {
+          id: "news_3",
+          title: "Patch Notes: Balance Updates and Bug Fixes",
+          url: "https://store.steampowered.com/news/app/553850/view/1234567892",
+          contents: "This update includes balance adjustments to several Stratagems, fixes for connection issues, and improvements to the galactic war progression system...",
+          date: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(), // 3 days ago
+          author: "Arrowhead Game Studios"
+        }
+      ],
       lastUpdated: new Date().toISOString()
     };
   } catch (error) {
@@ -201,8 +340,62 @@ export async function fetchAllData() {
           progress: 0.23
         }
       ],
-      dispatches: [],
-      steamNews: [],
+      dispatches: [
+        {
+          id: 1,
+          type: "MAJOR_ORDER",
+          message: "URGENT: All Helldivers report to nearest Super Destroyer. New Terminid bioforms detected in Sector 7. Extreme caution advised.",
+          publishedAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(), // 2 hours ago
+          author: "High Command"
+        },
+        {
+          id: 2,
+          type: "TACTICAL_UPDATE",
+          message: "Automaton forces have been pushed back from the Turing system. Helldivers are advised to maintain defensive positions and prepare for counterattack.",
+          publishedAt: new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString(), // 6 hours ago
+          author: "Tactical Command"
+        },
+        {
+          id: 3,
+          type: "SUPPLY_DROP",
+          message: "New shipment of Stratagems has arrived. Priority access granted to active Helldivers in contested sectors.",
+          publishedAt: new Date(Date.now() - 12 * 60 * 60 * 1000).toISOString(), // 12 hours ago
+          author: "Supply Division"
+        },
+        {
+          id: 4,
+          type: "INTELLIGENCE",
+          message: "Reconnaissance reports indicate unusual Illuminate activity near the outer rim. Investigation teams are being deployed.",
+          publishedAt: new Date(Date.now() - 18 * 60 * 60 * 1000).toISOString(), // 18 hours ago
+          author: "Intelligence Division"
+        }
+      ],
+      steamNews: [
+        {
+          id: "news_1",
+          title: "Helldivers 2: Galactic War Update - New Enemy Types Discovered",
+          url: "https://store.steampowered.com/news/app/553850/view/1234567890",
+          contents: "Super Earth Command has confirmed the discovery of new Terminid bioforms in the outer colonies. These enhanced creatures show increased resistance to standard weaponry...",
+          date: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(), // 1 day ago
+          author: "Arrowhead Game Studios"
+        },
+        {
+          id: "news_2",
+          title: "Community Challenge: Liberation of Sector 7 Complete!",
+          url: "https://store.steampowered.com/news/app/553850/view/1234567891",
+          contents: "Thanks to the heroic efforts of Helldivers across the galaxy, Sector 7 has been successfully liberated from Automaton control. Victory celebrations are underway...",
+          date: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(), // 2 days ago
+          author: "Arrowhead Game Studios"
+        },
+        {
+          id: "news_3",
+          title: "Patch Notes: Balance Updates and Bug Fixes",
+          url: "https://store.steampowered.com/news/app/553850/view/1234567892",
+          contents: "This update includes balance adjustments to several Stratagems, fixes for connection issues, and improvements to the galactic war progression system...",
+          date: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(), // 3 days ago
+          author: "Arrowhead Game Studios"
+        }
+      ],
       lastUpdated: new Date().toISOString()
     };
   }

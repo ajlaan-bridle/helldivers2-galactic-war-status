@@ -1,0 +1,119 @@
+.dispatches-panel {
+  background-color: #2a2a2a;
+  border: 1px solid #444;
+  border-radius: 8px;
+  padding: 16px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.dispatches-panel h3 {
+  color: #ffd700;
+  margin: 0 0 16px 0;
+  font-size: 1.2em;
+  font-weight: bold;
+  text-align: center;
+  border-bottom: 2px solid #ffd700;
+  padding-bottom: 8px;
+}
+
+.dispatches-list {
+  flex: 1;
+  overflow-y: auto;
+  max-height: 400px;
+}
+
+.dispatch-item {
+  background-color: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 6px;
+  padding: 12px;
+  margin-bottom: 12px;
+  transition: all 0.2s ease;
+}
+
+.dispatch-item:hover {
+  background-color: #222;
+  border-color: #555;
+  transform: translateY(-1px);
+}
+
+.dispatch-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.dispatch-type {
+  font-weight: bold;
+  font-size: 0.85em;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 2px 6px;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+}
+
+.dispatch-time {
+  color: #888;
+  font-size: 0.8em;
+}
+
+.dispatch-message {
+  color: #e0e0e0;
+  line-height: 1.4;
+  margin-bottom: 8px;
+  font-size: 0.9em;
+}
+
+.dispatch-author {
+  color: #aaa;
+  font-size: 0.8em;
+  font-style: italic;
+  text-align: right;
+}
+
+.no-dispatches {
+  color: #888;
+  text-align: center;
+  padding: 20px;
+  font-style: italic;
+}
+
+/* Scrollbar styling */
+.dispatches-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.dispatches-list::-webkit-scrollbar-track {
+  background: #1a1a1a;
+  border-radius: 3px;
+}
+
+.dispatches-list::-webkit-scrollbar-thumb {
+  background: #444;
+  border-radius: 3px;
+}
+
+.dispatches-list::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .dispatches-panel {
+    padding: 12px;
+  }
+  
+  .dispatch-item {
+    padding: 10px;
+  }
+  
+  .dispatch-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+}
