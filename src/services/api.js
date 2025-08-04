@@ -33,6 +33,190 @@ class RateLimiter {
 const rateLimiter = new RateLimiter();
 
 /**
+ * Extract and validate required fields from war stats according to PRD
+ * @param {Object} warStats - Raw war stats data from API
+ * @returns {Object} - Validated war stats with required fields
+ */
+function extractWarStatsFields(warStats) {
+  if (!warStats || !warStats.statistics) {
+    console.warn('War stats missing or invalid structure');
+    return null;
+  }
+  
+  const stats = warStats.statistics;
+  return {
+    missionsWon: stats.missionsWon || 0,
+    missionsLost: stats.missionsLost || 0,
+    missionSuccessRate: stats.missionSuccessRate || 0,
+    terminidKills: stats.terminidKills || 0,
+    automatonKills: stats.automatonKills || 0,
+    illuminateKills: stats.illuminateKills || 0,
+    timePlayed: stats.timePlayed || 0,
+    playerCount: stats.playerCount || 0
+  };
+}
+
+/**
+ * Extract and validate required fields from assignments according to PRD
+ * @param {Array} assignments - Raw assignments data from API
+ * @returns {Array} - Validated assignments with required fields
+ */
+function extractAssignmentsFields(assignments) {
+  if (!Array.isArray(assignments)) {
+    console.warn('Assignments data is not an array or is missing');
+    return [];
+  }
+  
+  return assignments.map(assignment => {
+    const progress = assignment.progress && assignment.progress[0] ? assignment.progress[0] : 0;
+    const targetValue = assignment.tasks && assignment.tasks[0] && assignment.tasks[0].values && assignment.tasks[0].values[2] ? assignment.tasks[0].values[2] : 1;
+    
+    return {
+      title: assignment.title || 'Unknown Assignment',
+      briefing: assignment.briefing || '',
+      progress: progress,
+      target: targetValue,
+      progressPercentage: targetValue > 0 ? (progress / targetValue) * 100 : 0,
+      expiration: assignment.expiration || null
+    };
+  });
+}
+
+/**
+ * Extract and validate required fields from planets according to PRD
+ * @param {Array} planets - Raw planets data from API
+ * @returns {Array} - Validated planets with required fields
+ */
+function extractPlanetsFields(planets) {
+  if (!Array.isArray(planets)) {
+    console.warn('Planets data is not an array or is missing');
+    return [];
+  }
+  
+  return planets.map(planet => {
+    const enemyFaction = planet.currentOwner !== 'Humans' ? planet.currentOwner : null;
+    
+    return {
+      index: planet.index,
+      name: planet.name || 'Unknown Planet',
+      sector: planet.sector || 'Unknown Sector',
+      biome: planet.biome || 'Unknown Biome',
+      hazards: planet.hazards || [],
+      position: planet.position || { x: 0, y: 0 },
+      currentOwner: planet.currentOwner || 'Unknown',
+      enemyFaction: enemyFaction,
+      playerCount: planet.statistics && planet.statistics.playerCount ? planet.statistics.playerCount : 0
+    };
+  });
+}
+
+/**
+ * Extract and validate required fields from campaigns according to PRD
+ * @param {Array} campaigns - Raw campaigns data from API
+ * @returns {Array} - Validated campaigns with required fields
+ */
+function extractCampaignsFields(campaigns) {
+  if (!Array.isArray(campaigns)) {
+    console.warn('Campaigns data is not an array or is missing');
+    return [];
+  }
+  
+  return campaigns.map(campaign => {
+    const hasEvent = campaign.planet && campaign.planet.event;
+    let eventProgress = null;
+    let eventEndTime = null;
+    
+    if (hasEvent) {
+      const event = campaign.planet.event;
+      eventProgress = event.maxHealth > 0 ? 1 - (event.health / event.maxHealth) : 0;
+      eventEndTime = event.endTime;
+    }
+    
+    return {
+      planetIndex: campaign.planet && campaign.planet.index ? campaign.planet.index : campaign.planetIndex,
+      hasEvent: !!hasEvent,
+      eventProgress: eventProgress,
+      eventEndTime: eventEndTime
+    };
+  });
+}
+
+/**
+ * Filter dispatches to only include those from the last 36 hours according to PRD
+ * @param {Array} dispatches - Raw dispatches data from API
+ * @returns {Array} - Filtered dispatches
+ */
+function filterDispatches(dispatches) {
+  if (!Array.isArray(dispatches)) {
+    console.warn('Dispatches data is not an array or is missing');
+    return [];
+  }
+  
+  const thirtySevenHoursAgo = new Date(Date.now() - 36 * 60 * 60 * 1000);
+  
+  return dispatches.filter(dispatch => {
+    const publishedDate = new Date(dispatch.published || dispatch.publishedAt || 0);
+    return publishedDate > thirtySevenHoursAgo;
+  });
+}
+
+/**
+ * Filter Steam news to show most recent OR last week, whichever is greater according to PRD
+ * @param {Array} steamNews - Raw Steam news data from API
+ * @returns {Array} - Filtered Steam news
+ */
+function filterSteamNews(steamNews) {
+  if (!Array.isArray(steamNews)) {
+    console.warn('Steam news data is not an array or is missing');
+    return [];
+  }
+  
+  if (steamNews.length === 0) return [];
+  
+  // Sort by date (most recent first)
+  const sortedNews = steamNews.sort((a, b) => {
+    const dateA = new Date(a.date || a.publishedAt || 0);
+    const dateB = new Date(b.date || b.publishedAt || 0);
+    return dateB - dateA;
+  });
+  
+  // Get the most recent news item
+  const mostRecent = sortedNews[0];
+  const oneWeekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+  const mostRecentDate = new Date(mostRecent.date || mostRecent.publishedAt || 0);
+  
+  // If most recent is within a week, filter to last week
+  if (mostRecentDate > oneWeekAgo) {
+    return sortedNews.filter(news => {
+      const newsDate = new Date(news.date || news.publishedAt || 0);
+      return newsDate > oneWeekAgo;
+    });
+  }
+  
+  // Otherwise, just return the most recent
+  return [mostRecent];
+}
+
+/**
+ * Extract and validate required fields from space stations according to PRD
+ * @param {Array} spaceStations - Raw space stations data from API
+ * @returns {Array} - Validated space stations with required fields
+ */
+function extractSpaceStationsFields(spaceStations) {
+  if (!Array.isArray(spaceStations)) {
+    console.warn('Space stations data is not an array or is missing');
+    return [];
+  }
+  
+  return spaceStations.map(station => {
+    return {
+      position: station.planet && station.planet.position ? station.planet.position : { x: 0, y: 0 },
+      electionEnd: station.electionEnd || null
+    };
+  });
+}
+
+/**
  * Fetch data from the Helldivers 2 API
  * @param {string} endpoint - The API endpoint (e.g., '/v1/war')
  * @returns {Promise<Object>} - The parsed JSON response
@@ -105,10 +289,35 @@ export async function fetchAllData() {
       console.log('Space stations failed:', spaceStations.reason);
     }
     
-    // Use real data if available, fall back to mock data if needed
+    // Process and validate data according to PRD requirements
+    const processedWarStats = warStats.status === 'fulfilled' ? extractWarStatsFields(warStats.value) : null;
+    const processedAssignments = assignments.status === 'fulfilled' ? extractAssignmentsFields(assignments.value) : [];
+    const processedPlanets = planets.status === 'fulfilled' ? extractPlanetsFields(planets.value) : [];
+    const processedCampaigns = campaigns.status === 'fulfilled' ? extractCampaignsFields(campaigns.value) : [];
+    const filteredDispatches = dispatches.status === 'fulfilled' ? filterDispatches(dispatches.value) : [];
+    const filteredSteamNews = steamNews.status === 'fulfilled' ? filterSteamNews(steamNews.value) : [];
+    const processedSpaceStations = spaceStations.status === 'fulfilled' ? extractSpaceStationsFields(spaceStations.value) : [];
+    
+    // Log processed data for debugging
+    console.log('Processed data:', {
+      warStats: processedWarStats ? 'processed' : 'null',
+      assignments: `${processedAssignments.length} assignments`,
+      planets: `${processedPlanets.length} planets`,
+      campaigns: `${processedCampaigns.length} campaigns`,
+      dispatches: `${filteredDispatches.length} dispatches (filtered)`,
+      steamNews: `${filteredSteamNews.length} steam news (filtered)`,
+      spaceStations: `${processedSpaceStations.length} space stations`
+    });
+    
+    // Handle "no active Major Order" case as per PRD
+    if (processedAssignments.length === 0) {
+      console.log('No active Major Orders found');
+    }
+    
+    // Use processed data if available, fall back to mock data if needed
     return {
-      warStats: warStats.status === 'fulfilled' ? warStats.value : null,
-      assignments: assignments.status === 'fulfilled' ? assignments.value : [
+      warStats: processedWarStats,
+      assignments: processedAssignments.length > 0 ? processedAssignments : [
         {
           id: 1,
           briefing: "Collect Terminid samples and hold key scientific facilities",
@@ -130,7 +339,7 @@ export async function fetchAllData() {
           }
         }
       ],
-      planets: planets.status === 'fulfilled' ? planets.value : [
+      planets: processedPlanets.length > 0 ? processedPlanets : [
         {
           name: "TURING",
           faction: "Humans",
@@ -266,7 +475,7 @@ export async function fetchAllData() {
           }
         }
       ],
-      campaigns: [
+      campaigns: processedCampaigns.length > 0 ? processedCampaigns : [
         {
           planetIndex: 0,
           progress: 0.75
@@ -280,7 +489,7 @@ export async function fetchAllData() {
           progress: 0.23
         }
       ],
-      dispatches: [
+      dispatches: filteredDispatches.length > 0 ? filteredDispatches : [
         {
           id: 1,
           type: "MAJOR_ORDER",
@@ -310,7 +519,7 @@ export async function fetchAllData() {
           author: "Intelligence Division"
         }
       ],
-      steamNews: [
+      steamNews: filteredSteamNews.length > 0 ? filteredSteamNews : [
         {
           id: "news_1",
           title: "Helldivers 2: Galactic War Update - New Enemy Types Discovered",
@@ -336,7 +545,7 @@ export async function fetchAllData() {
           author: "Arrowhead Game Studios"
         }
       ],
-      spaceStations: spaceStations.status === 'fulfilled' ? spaceStations.value : [],
+      spaceStations: processedSpaceStations,
       lastUpdated: new Date().toISOString()
     };
   }
